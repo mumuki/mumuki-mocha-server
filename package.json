@@ -1,7 +1,7 @@
 {
   "name": "mumuki-mocha-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node server for running mocha tests within Mumuki",
   "main": "index.js",
   "scripts": {
     "test": "mocha spec"
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/aguspina/mumuki-mocha-server",
   "dependencies": {
+    "express": "^4.11.1",
     "mocha": "^2.1.0"
   }
 }
