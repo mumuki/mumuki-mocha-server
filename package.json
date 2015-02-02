@@ -2,7 +2,7 @@
   "name": "mumuki-mocha-server",
   "version": "1.0.0",
   "description": "Node server for running mocha tests within Mumuki",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha spec"
   },
@@ -19,6 +19,8 @@
   "dependencies": {
     "body-parser": "^1.10.2",
     "express": "^4.11.1",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "temp": "^0.8.1",
+    "tmp": "0.0.24"
   }
 }
