@@ -5,13 +5,13 @@ var fs = require('fs');
 var compiler = require('./file-test-compiler');
 var runner = require('./command-line-test-runner');
 var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.use(bodyParser.json(),bodyParser.urlencoded({ extended: true }));
 
-app.post('/test', urlencodedParser, function (req, res) {
+app.post('/test', function (req, res) {
   var path = compiler.createCompilationFile(req.body);
-  runner.runTestFile(path);
-  Response.OK(res)({"exit":"passed","out":"All is passing"});
+  console.log(req.body);
+  var output = runner.runTestFile(path);
+  Response.OK(res)({"exit":"passed","out":output});
 })
 
 var server = app.listen(8080, function () {
