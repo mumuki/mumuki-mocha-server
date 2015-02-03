@@ -5,11 +5,14 @@ var fs = require('fs');
 var compiler = require('./file-test-compiler');
 var runner = require('./command-line-test-runner');
 var bodyParser = require('body-parser');
-app.use(bodyParser.json(),bodyParser.urlencoded({ extended: true }));
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-app.post('/test', function (req, res) {
-  var path = compiler.createCompilationFile(req.body);
-  console.log(req.body);
+app.post('/test', urlencodedParser, function (req, res) {
+  var json = {};
+  for(var id in req.body) {
+    json = JSON.parse(id);
+  }
+  var path = compiler.createCompilationFile(json);
   var output = runner.runTestFile(path);
   Response.OK(res)({"exit":"passed","out":output});
 })
