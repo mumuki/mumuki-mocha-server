@@ -1,17 +1,25 @@
+var child_process = require('child_process');
 var fs = require('fs');
-function runTestFile(path) {
-  var response;
-  var exec = require('child_process').exec;
-  var options = {cwd: true}
-  exec('mocha test.js', options, function (error, stdout, stderr) {
-    console.log("Stdout: "+stdout);
-    console.log("Error: "+error);
-    console.log("Stderr: "+stderr);
-    response = stdout;
-    fs.unlink('./test.js',function(err) {
-    });
-  });
-  return response;
+ 
+function runTestFile() {
+// Run the command in a subshell
+child_process.exec("mocha -R reporter-file test.js" + ' 2>&1 1>output && echo done! > done');
+ 
+// Block the event loop until the command has executed.
+while (!fs.existsSync('output') && !fs.existsSync('xunit.xml')) {
+// Do nothing
+}
+ 
+// Read the output
+var output = fs.readFileSync('output');
+var xml = fs.readFileSync('xunit.xml');
+console.log(String(output));
+ 
+// Delete temporary files.
+fs.unlinkSync('output');
+
+ 
+return [output, xml];
 }
 
 exports.runTestFile = runTestFile;
