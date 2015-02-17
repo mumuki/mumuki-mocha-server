@@ -12,14 +12,13 @@ while (!fs.existsSync('output') && !fs.existsSync('xunit.xml')) {
  
 // Read the output
 var output = fs.readFileSync('output');
-var xml = fs.readFileSync('xunit.xml');
 console.log(String(output));
  
 // Delete temporary files.
-fs.unlinkSync('output');
+
 
  
-return [output, xml];
+return output;
 }
 
 exports.runTestFile = runTestFile;
