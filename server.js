@@ -41,5 +41,5 @@ app.post('/test', urlencodedParser, function (req, res) {
 })
 
 var server = app.listen(8080, function () {
-
+  console.log("Serving on port 8080");
 })
