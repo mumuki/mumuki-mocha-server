@@ -1,24 +1,25 @@
 var express = require('express');
 var Response = require('express-response');
+
 var app = express();
 var fs = require('fs');
-var compiler = require('./file-test-compiler');
-var runner = require('./command-line-test-runner');
+
+var compiler = require('./test-compiler');
+var runner = require('./test-runner');
+
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 var parseString = require('xml2js').parseString;
-var child_process = require('child_process');
+var childProcess = require('child_process');
 
 app.post('/test', urlencodedParser, function (req, res) {
-  /*var json = {};
-  for(var id in req.body) {
-    json = JSON.parse(id);
-  }*/
   compiler.createCompilationFile(req.body);
+
   var result2 = "";
   var output2 = "";
+
   var output = runner.runTestFile();
-  child_process.exec("ls" + ' 2>&1 1>ls');
+  childProcess.exec("ls" + ' 2>&1 1>ls');
   var xml = fs.readFileSync('xunit.xml', 'ascii');
   parseString(xml, {async: false}, function (err, result) {
     if(result.testsuite.$.failures === "0")
