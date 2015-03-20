@@ -11,10 +11,10 @@ var compiler = require('./test-compiler');
 var runner = require('./test-runner');
 
 app.post('/test', jsonParser, function (req, res) {
-  compiler.createCompilationFile(req.body);
-  runner.runTestFile(function(result) {
-    fs.unlinkSync("test.js");
-    Response.OK(res)(result);
+  compiler.createCompilationFile(req.body, function(file){
+    runner.runTestFile(file, function(result) {
+      Response.OK(res)(result);
+    });
   });
 })
 
