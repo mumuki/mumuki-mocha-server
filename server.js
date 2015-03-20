@@ -5,15 +5,13 @@ var app = express();
 
 var jsonParser = bodyParser.json({ type: 'application/*' });
 
-var Response = require('express-response');
-
 var compiler = require('./test-compiler');
 var runner = require('./test-runner');
 
 app.post('/test', jsonParser, function (req, res) {
   compiler.createCompilationFile(req.body, function(file){
     runner.runTestFile(file, function(result) {
-      Response.OK(res)(result);
+      res.send(JSON.stringify(result));
     });
   });
 })
