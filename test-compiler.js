@@ -3,7 +3,7 @@ var tmp = require('tmp');
 
 function createCompilationFile(body, done) {
   tmp.file(function(err, path, fd) {
-    var requires = "var chai = require('chai'), assert = chai.assert, expect = chai.expect;";
+    var requires = "var assert = require('assert');";
     fs.writeFile(path, requires +'\n'+ body.content + '\n' + body.test, function(){
       done(path);
     });
