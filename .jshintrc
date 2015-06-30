@@ -1,0 +1,12 @@
+{
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "funcscope": true,
+  "nonew": true,
+  "quotmark": "single",
+  "strict": true,
+  "undef": true,
+  "node": true,
+  "mocha": true
+}
