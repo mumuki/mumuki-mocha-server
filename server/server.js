@@ -13,7 +13,7 @@ var runner = require('./test-runner');
 app.post('/test', jsonParser, function (req, res) {
   compiler.createCompilationFile(req.body, function (file) {
     runner.runTestFile(file, function (result) {
-      res.send(JSON.stringify(result));
+      res.status(200).json(result);
     });
   });
 });

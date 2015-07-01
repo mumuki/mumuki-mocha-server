@@ -15,7 +15,7 @@ describe('POST /test', function () {
       .post('/test')
       .send(excecise.body)
       .expect(200, function (err, res) {
-        var body = JSON.parse(res.text);
+        var body = res.body;
         body.exit.should.be.eql(excecise.expected.exit);
         body.out.should.match(excecise.expected.out);
         done(err, res);
