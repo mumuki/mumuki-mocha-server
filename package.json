@@ -4,7 +4,7 @@
   "description": "Node server for running mocha tests within Mumuki",
   "main": "server/index.js",
   "scripts": {
-    "test": "mocha -R reporter-file"
+    "test": "node_modules/.bin/mocha -R spec test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -19,9 +19,11 @@
   "dependencies": {
     "body-parser": "^1.10.2",
     "express": "^4.11.1",
-    "mocha": "^2.1.0",
-    "reporter-file": "0.0.1",
-    "xml2js": "^0.4.4",
     "tmp": "0.0.25"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "should": "^7.0.1",
+    "supertest": "^1.0.1"
   }
 }
