@@ -13,12 +13,9 @@ var runner = require('./test-runner');
 app.post('/test', jsonParser, function (req, res) {
   compiler.createCompilationFile(req.body, function (file) {
     runner.runTestFile(file, function (result) {
-      res.send(JSON.stringify(result));
+      res.status(200).json(result);
     });
   });
 });
 
-var port = process.env.PORT || 8080;
-var server = app.listen(port, function () {
-  console.log('Serving on port ' + port);
-});
+module.exports = app;

@@ -5,4 +5,4 @@
 
 
 **Run the server**
-`node server.js`
+`node server`
