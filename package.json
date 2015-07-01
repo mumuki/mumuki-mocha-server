@@ -2,7 +2,7 @@
   "name": "mumuki-mocha-server",
   "version": "1.0.0",
   "description": "Node server for running mocha tests within Mumuki",
-  "main": "server.js",
+  "main": "server/index.js",
   "scripts": {
     "test": "mocha -R reporter-file"
   },
