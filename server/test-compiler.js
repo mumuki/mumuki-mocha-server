@@ -2,13 +2,17 @@
 
 var fs = require('fs');
 var tmp = require('tmp');
+var Bluebird = require('bluebird');
 
-function createCompilationFile(body, done) {
-  tmp.file(function (err, path, fd) {
-    fs.writeFile(path, compile(body), function () {
-      done(path);
-    });
-  });
+Bluebird.promisifyAll(fs);
+Bluebird.promisifyAll(tmp);
+
+function createCompilationFile(body) {
+  return Bluebird.join(tmp.fileAsync().get(0), compile(body), writeContent);
+}
+
+function writeContent(path, content) {
+  return fs.writeFileAsync(path, content).thenReturn(path);
 }
 
 function compile(body) {
