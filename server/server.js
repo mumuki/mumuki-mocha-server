@@ -3,19 +3,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var testController = require('./test-controller');
+
 var app = express();
 
-var jsonParser = bodyParser.json({ type: 'application/*' });
-
-var compiler = require('./test-compiler');
-var runner = require('./test-runner');
-
-app.post('/test', jsonParser, function (req, res) {
-  compiler.createCompilationFile(req.body, function (file) {
-    runner.runTestFile(file, function (result) {
-      res.status(200).json(result);
-    });
-  });
-});
+app.post('/test', [
+  bodyParser.json({ type: 'application/*' }),
+  testController.handle
+]);
 
 module.exports = app;
