@@ -36,7 +36,8 @@ describe('POST /test', function () {
         result.out.should.match(excecise.expected.out);
         result.expectationResults.should.be.eql([
           { expectation: { binding: 'haceFrioF', inspection: 'HasBinding' }, result: true },
-          { expectation: { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' }, result: true }
+          { expectation: { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' }, result: true },
+          { expectation: { binding: 'fahrToCelsius', inspection: 'Not:HasBinding' }, result: true }
         ]);
         done();
       });

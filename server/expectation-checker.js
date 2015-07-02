@@ -1,6 +1,18 @@
 'use strict';
 
+var _ = require('lodash');
+
 var expectationChecker = {
+
+  HasBinding: function (astNode) {
+    return !_.isEmpty(astNode);
+  },
+
+  HasUsage: function (astNode, target) {
+    var node = JSON.stringify(astNode);
+    var regExp = new RegExp('"callee":{"type":"Identifier","name":"' + target.trim() + '"}');
+    return !_.isEmpty(astNode) && regExp.test(node);
+  },
 
   Default: function () {
     return true;
@@ -12,8 +24,9 @@ function isNot(value) {
   return /not/i.test(value);
 }
 
-function lookup(ast, identifier) {
-  // TODO: Implement;
+function lookup(ast, binding) {
+  var programStatements = ast.body;
+  return _.find(programStatements, { id: { type: 'Identifier', name: binding } });
 }
 
 function getInspection(expectation) {

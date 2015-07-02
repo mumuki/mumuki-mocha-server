@@ -78,7 +78,8 @@ module.exports = {
         ].join('\n'),
         expectations:[
           { binding: 'haceFrioF', inspection: 'HasBinding' },
-          { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' }
+          { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' },
+          { binding: 'fahrToCelsius', inspection: 'Not:HasBinding' }
         ]
       },
       expected: {
@@ -116,7 +117,8 @@ module.exports = {
         ].join('\n'),
         expectations:[
           { binding: 'haceFrioF', inspection: 'HasBinding' },
-          { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' }
+          { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' },
+          { binding: 'fahrToCelsius', inspection: 'Not:HasBinding' }
         ]
       },
       expected: {
