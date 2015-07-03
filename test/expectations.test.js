@@ -6,36 +6,42 @@ var j = require('junify');
 
 var assert = require('assert');
 
+function match(patterns) {
+  return function(it) {
+    return patterns.some(function(pattern) {
+      return  j.unify(pattern, it);
+    })
+  }
+}
+
+function identifier(binding) {
+  return { type: 'Identifier', name: binding };
+}
+
 function HasBinding(binding, ast) {
-  return declarationsOf(ast).some(function(it){
-    return j.unify({
-              type: 'FunctionDeclaration',
-              id: { type: 'Identifier', name: binding },
-              _: j._
-            }, it)
-        || j.unify({
-              type: 'VariableDeclaration',
-              declarations: [{
-                type: 'VariableDeclarator',
-                id: { type: 'Identifier', name: binding },
-                init: j._ }],
-              _: j._
-            }, it);
-  });
+  return declarationsOf(ast).some(match([
+    { type: 'FunctionDeclaration', id: identifier(binding), _: j._ },
+    {
+      type: 'VariableDeclaration',
+      declarations: [{
+        type: 'VariableDeclarator',
+        id: identifier(binding),
+        init: j._ }],
+        _: j._
+      }]));
 }
 
 function declarationsOf(ast) {
-  return ast.body.filter(function(it){
-    return j.unify({type: 'VariableDeclaration', _: j._}, it)
-        || j.unify({type: 'FunctionDeclaration', _: j._}, it);
-  });
+  return ast.body.filter(match([
+    {type: 'VariableDeclaration', _: j._},
+    {type: 'FunctionDeclaration', _: j._}]));
 }
 
 function p(code) {
   return esprima.parse(code)
 }
 
-describe('POST /test', function () {
+describe('HasBinding', function () {
 
   it("hasBinding when function declaration exists for binding", function(){
     assert(HasBinding('foo', p('function foo(){}')));
