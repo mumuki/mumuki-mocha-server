@@ -24,7 +24,8 @@
     "esprima": "^2.4.1",
     "express": "^4.11.1",
     "lodash": "^3.10.0",
-    "tmp": "0.0.25"
+    "tmp": "0.0.25",
+    "junify": "1.0.2"
   },
   "devDependencies": {
     "codeclimate-test-reporter": "^0.1.0",
