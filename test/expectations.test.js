@@ -11,7 +11,7 @@ var j = require('junify');
 
 var assert = require('assert');
 
-function hasBinding(binding, ast) {
+function hasBinding(ast, binding) {
   return declarationsOf(ast).some(match([
     { type: 'FunctionDeclaration', id: identifier(binding), _: j._ },
     { type: 'VariableDeclarator', id: identifier(binding), init: j._ }
@@ -49,35 +49,35 @@ function p(code) {
 describe('hasBinding', function () {
 
   it('hasBinding when function declaration exists for binding', function () {
-    assert(hasBinding('foo', p('function foo(){}')));
+    assert(hasBinding(p('function foo(){}'), 'foo'));
   });
 
   it('not hasBinding when function declaration exist for other binding', function () {
-    assert(!hasBinding('bar', p('function foo(){}')));
+    assert(!hasBinding(p('function foo(){}'), 'bar'));
   });
 
   it('not hasBinding when code is empty', function () {
-    assert(!hasBinding('bar', p('')));
+    assert(!hasBinding(p(''), 'bar'));
   });
 
   it('hasBinding when code has variable for binding', function () {
-    assert(hasBinding('bar', p('var bar = 4')));
+    assert(hasBinding(p('var bar = 4'), 'bar'));
   });
 
   it('not hasBinding when code has variable for other binding', function () {
-    assert(!hasBinding('bar', p('var foo = 4')));
+    assert(!hasBinding(p('var foo = 4'), 'bar'));
   });
 
   it('not hasBinding when code has expression', function () {
-    assert(!hasBinding('bar', p('5 + 2')));
+    assert(!hasBinding(p('5 + 2'), 'bar'));
   });
 
   it('hasBinding for first declarator when code has multiple varible declarators', function () {
-    assert(hasBinding('a', p('var a = 5, b = 2;')));
+    assert(hasBinding(p('var a = 5, b = 2;'), 'a'));
   });
 
   it('hasBinding for second declarator when code has multiple varible declarators', function () {
-    assert(hasBinding('b', p('var a = 5, b = 2;')));
+    assert(hasBinding(p('var a = 5, b = 2;'), 'b'));
   });
 
 });
