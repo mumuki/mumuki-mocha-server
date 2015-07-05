@@ -11,22 +11,36 @@ var j = require('junify');
 
 var assert = require('assert');
 
+// Public
 function hasBinding(ast, binding) {
   return declarationsOf(ast).some(match([
     { type: 'FunctionDeclaration', id: identifier(binding), _: j._ },
-    { type: 'VariableDeclarator', id: identifier(binding), init: j._ }
+    { type: 'VariableDeclarator', id: identifier(binding), _: j._ }
   ]));
 }
 
 function hasUsage(ast, binding, target) {
   return declarationsOf(ast).some(function (declaration) {
     if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, declaration)) {
-      return declaration.body.body.some(match([
-        { type: 'ReturnStatement', argument: identifier(target) },
-        { type: 'ReturnStatement', argument: { type: 'CallExpression', callee: identifier(target), _: j._ }}
-      ]));
+      return declaration.body.body.some(function (statement) {
+        var patternBinding = j.unify({ type: 'ReturnStatement', argument: j.variable('expression'), _: j._ }, statement) ||
+                             j.unify({ type: 'ExpressionStatement', expression: j.variable('expression'), _: j._ }, statement);
+          if (patternBinding) {
+            return expressionHasUsage(patternBinding.expression, target);
+          }
+      });
     }
   });
+}
+
+// Private
+function expressionHasUsage(arg, target) {
+  return match([
+    identifier(target),
+    { type: 'CallExpression', callee: identifier(target), _: j._ },
+    { type: 'BinaryExpression', operator: j._, left: j._, right: identifier(target) },
+    { type: 'BinaryExpression', operator: j._, left: identifier(target), right: j._ }
+  ])(arg);
 }
 
 function match(patterns) {
@@ -107,12 +121,32 @@ describe('hasUsage', function () {
     assert(hasUsage(p('function foo() { return bar(1,2,3); }'), 'foo', 'bar'));
   });
 
+  it('when target is in binary binding return statement', function () {
+    assert(hasUsage(p('function foo() { return 1 + bar; }'), 'foo', 'bar'));
+  });
+
+  it('when target is in binary binding return statement', function () {
+    assert(hasUsage(p('function foo() { return bar + 1; }'), 'foo', 'bar'));
+  });
+
   it('when target is not in binding return statement', function () {
     assert(!hasUsage(p('function foo() { return baz(); }'), 'foo', 'bar'));
   });
 
   it('when binding does not exist', function () {
     assert(!hasUsage(p('5 + 2;'), 'foo', 'bar'));
+  });
+
+  it('when target is applied with arguments in binding expression statement', function () {
+    assert(hasUsage(p('function foo() { bar(1,2,3); }'), 'foo', 'bar'));
+  });
+
+  it('when target is in binary binding expression statement', function () {
+    assert(hasUsage(p('function foo() { 1 + bar; }'), 'foo', 'bar'));
+  });
+
+  it('when target is in binary binding expression statement', function () {
+    assert(hasUsage(p('function foo() { bar + 1; }'), 'foo', 'bar'));
   });
 
 });
