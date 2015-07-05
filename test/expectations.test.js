@@ -21,19 +21,30 @@ function hasBinding(ast, binding) {
 
 function hasUsage(ast, binding, target) {
   return declarationsOf(ast).some(function (declaration) {
+    // REFACTOR ME
     if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, declaration)) {
       return declaration.body.body.some(function (statement) {
-        var patternBinding = j.unify({ type: 'ReturnStatement', argument: j.variable('expression'), _: j._ }, statement) ||
-                             j.unify({ type: 'ExpressionStatement', expression: j.variable('expression'), _: j._ }, statement);
-          if (patternBinding) {
-            return expressionHasUsage(patternBinding.expression, target);
-          }
+        var patternBinding = extract(statement, [
+          { type: 'ReturnStatement', argument: j.variable('expression'), _: j._ },
+          { type: 'ExpressionStatement', expression: j.variable('expression'), _: j._ }
+        ]);
+        return patternBinding && expressionHasUsage(patternBinding.expression, target);
       });
+    }
+    if (j.unify({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, declaration)) {
+      return expressionHasUsage(declaration.init, target);
     }
   });
 }
 
 // Private
+
+function extract(ast, patterns) {
+  return patterns.reduce(function (accum, pattern) {
+    return accum || j.unify(pattern, ast);
+  }, false);
+}
+
 function expressionHasUsage(arg, target) {
   return match([
     identifier(target),
@@ -113,6 +124,10 @@ describe('hasUsage', function () {
     assert(hasUsage(p('function foo() { return bar; }'), 'foo', 'bar'));
   });
 
+  it('when target is not in binding return statement', function () {
+    assert(!hasUsage(p('function foo() { return baz; }'), 'foo', 'bar'));
+  });
+
   it('when target is applied in binding return statement', function () {
     assert(hasUsage(p('function foo() { return bar(); }'), 'foo', 'bar'));
   });
@@ -133,10 +148,6 @@ describe('hasUsage', function () {
     assert(!hasUsage(p('function foo() { return baz(); }'), 'foo', 'bar'));
   });
 
-  it('when binding does not exist', function () {
-    assert(!hasUsage(p('5 + 2;'), 'foo', 'bar'));
-  });
-
   it('when target is applied with arguments in binding expression statement', function () {
     assert(hasUsage(p('function foo() { bar(1,2,3); }'), 'foo', 'bar'));
   });
@@ -149,9 +160,29 @@ describe('hasUsage', function () {
     assert(hasUsage(p('function foo() { bar + 1; }'), 'foo', 'bar'));
   });
 
+  it('when target is not in binary binding expression statement', function () {
+    assert(!hasUsage(p('function foo() { 3 + 1; }'), 'foo', 'bar'));
+  });
+
+  it('when target is in init statement of binding variable', function () {
+    assert(hasUsage(p('var foo = bar;'), 'foo', 'bar'));
+  });
+
+  it('when target is not in init statement of binding variable', function () {
+    assert(!hasUsage(p('var foo = 4;'), 'foo', 'bar'));
+  });
+
+  it('when target is not in empty init statement of binding variable', function () {
+    assert(!hasUsage(p('var foo;'), 'foo', 'bar'));
+  });
+
+  it('when binding does not exist', function () {
+    assert(!hasUsage(p('5 + 2;'), 'foo', 'bar'));
+  });
+
 });
 
-describe('concatMap', function () {
+describe('utils', function () {
 
   it('concatMap', function () {
 
@@ -159,6 +190,11 @@ describe('concatMap', function () {
 
     concatMap.should.be.eql([1,2,3,4]);
 
+  });
+
+  it('extract', function () {
+    var binding = extract({ foo: 'bar' }, [{ foo: j.variable('exp') }]);
+    binding.should.be.eql({ exp: 'bar' });
   });
 
 });
