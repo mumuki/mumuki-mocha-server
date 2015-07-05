@@ -8,6 +8,7 @@ var should = require('should');
 
 var esprima = require('esprima');
 var j = require('junify');
+var _ = require('lodash');
 
 var assert = require('assert');
 
@@ -20,24 +21,23 @@ function hasBinding(ast, binding) {
 }
 
 function hasUsage(ast, binding, target) {
-  return declarationsOf(ast).some(function (declaration) {
-    // REFACTOR ME
-    if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, declaration)) {
-      return declaration.body.body.some(function (statement) {
-        var patternBinding = extract(statement, [
-          { type: 'ReturnStatement', argument: j.variable('expression'), _: j._ },
-          { type: 'ExpressionStatement', expression: j.variable('expression'), _: j._ }
-        ]);
-        return patternBinding && expressionHasUsage(patternBinding.expression, target);
-      });
-    }
-    if (j.unify({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, declaration)) {
-      return expressionHasUsage(declaration.init, target);
-    }
+  return expressionsOf(ast, binding).some(function (node) {
+    return expressionHasUsage(node, target);
   });
 }
 
 // Private
+function expressionsOf(ast, binding) {
+  return declarationsOf(ast).concatMap(function (node) {
+    if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, node)) {
+      return [node.body];
+    } else if (j.unify({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, node)) {
+      return [node.init];
+    } else {
+      return [];
+    }
+  });
+}
 
 function extract(ast, patterns) {
   return patterns.reduce(function (accum, pattern) {
@@ -46,12 +46,35 @@ function extract(ast, patterns) {
 }
 
 function expressionHasUsage(arg, target) {
-  return match([
-    identifier(target),
-    { type: 'CallExpression', callee: identifier(target), _: j._ },
-    { type: 'BinaryExpression', operator: j._, left: j._, right: identifier(target) },
-    { type: 'BinaryExpression', operator: j._, left: identifier(target), right: j._ }
-  ])(arg);
+  return matches(arg, [
+    [{ type: 'CallExpression', callee: j.variable('sub'), _: j._ }, function (result) {
+      return expressionHasUsage(result.sub, target);
+    }],
+    [{ type: 'BinaryExpression', operator: j._, left: j.variable('sub1'), right: j.variable('sub2') }, function (result) {
+      return expressionHasUsage(result.sub1, target) || expressionHasUsage(result.sub2, target);
+    }],
+    [{ type: 'ReturnStatement', argument: j.variable('sub'), _: j._ }, function (result) {
+      return expressionHasUsage(result.sub, target);
+    }],
+    [{ type: 'ExpressionStatement', expression: j.variable('sub'), _: j._ }, function (result) {
+      return expressionHasUsage(result.sub, target);
+    }],
+    [{ type: 'BlockStatement', body: j.variable('sub'), _: j._ }, function (result) {
+      return result.sub.some(function (it) {
+        return expressionHasUsage(it, target);
+      });
+    }],
+    [{ type: 'VariableDeclaration', declarations: j.variable('sub'), _: j._ }, function (result) {
+      return result.sub.some(function (it) {
+        return expressionHasUsage(it, target);
+      });
+    }],
+    [{ type: 'VariableDeclarator', init: j.variable('sub'), _: j._ }, function (result) {
+      return expressionHasUsage(result.sub, target);
+    }],
+    [identifier(target), _.constant(true)],
+    [j._, _.constant(false)],
+  ]);
 }
 
 function match(patterns) {
@@ -80,6 +103,18 @@ function declarationsOf(ast) {
 
 function p(code) {
   return esprima.parse(code);
+}
+
+function matches(arg, cases) {
+  for (var i = 0; i < cases.length; i++) {
+    var pattern = cases[i][0];
+    var callback = cases[i][1];
+    var match = j.unify(pattern, arg);
+    if (match) {
+      return callback(match);
+    }
+  }
+  throw new Error('Pattern matchnig error ' + JSON.stringify(arg));
 }
 
 describe('hasBinding', function () {
@@ -120,6 +155,7 @@ describe('hasBinding', function () {
 
 describe('hasUsage', function () {
 
+
   it('when target is in binding return statement', function () {
     assert(hasUsage(p('function foo() { return bar; }'), 'foo', 'bar'));
   });
@@ -158,6 +194,14 @@ describe('hasUsage', function () {
 
   it('when target is in binary binding expression statement', function () {
     assert(hasUsage(p('function foo() { bar + 1; }'), 'foo', 'bar'));
+  });
+
+  it('when target is in variable statement in function declaration', function () {
+    assert(hasUsage(p('function foo() { var x = bar; }'), 'foo', 'bar'));
+  });
+
+  it('when target is not in variable statement in function declaration', function () {
+    assert(!hasUsage(p('function foo() { var bar = 2; }'), 'foo', 'bar'));
   });
 
   it('when target is not in binary binding expression statement', function () {
