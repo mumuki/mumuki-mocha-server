@@ -18,6 +18,17 @@ function hasBinding(ast, binding) {
   ]));
 }
 
+function hasUsage(ast, binding, target) {
+  return declarationsOf(ast).some(function (declaration) {
+    if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, declaration)) {
+      return declaration.body.body.some(match([
+        { type: 'ReturnStatement', argument: identifier(target) },
+        { type: 'ReturnStatement', argument: { type: 'CallExpression', callee: identifier(target), _: j._ }}
+      ]));
+    }
+  });
+}
+
 function match(patterns) {
   return function (it) {
     return patterns.some(function (pattern) {
@@ -78,6 +89,30 @@ describe('hasBinding', function () {
 
   it('hasBinding for second declarator when code has multiple varible declarators', function () {
     assert(hasBinding(p('var a = 5, b = 2;'), 'b'));
+  });
+
+});
+
+describe('hasUsage', function () {
+
+  it('when target is in binding return statement', function () {
+    assert(hasUsage(p('function foo() { return bar; }'), 'foo', 'bar'));
+  });
+
+  it('when target is applied in binding return statement', function () {
+    assert(hasUsage(p('function foo() { return bar(); }'), 'foo', 'bar'));
+  });
+
+  it('when target is applied with arguments in binding return statement', function () {
+    assert(hasUsage(p('function foo() { return bar(1,2,3); }'), 'foo', 'bar'));
+  });
+
+  it('when target is not in binding return statement', function () {
+    assert(!hasUsage(p('function foo() { return baz(); }'), 'foo', 'bar'));
+  });
+
+  it('when binding does not exist', function () {
+    assert(!hasUsage(p('5 + 2;'), 'foo', 'bar'));
   });
 
 });
