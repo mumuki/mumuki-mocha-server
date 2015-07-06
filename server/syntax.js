@@ -4,9 +4,7 @@ var _ = require('lodash');
 var j = require('junify');
 var esprima = require('esprima');
 
-Array.prototype.concatMap = function (f) {
-  return Array.prototype.concat.apply([], this.map(f));
-};
+var extensions = require('./extensions');
 
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
