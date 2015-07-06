@@ -20,15 +20,6 @@ function expressionsOf(ast, binding) {
   });
 }
 
-function expressionHasUsage(arg, target) {
-  return explore(arg, function (expression) {
-    return j.match(expression, [
-      j.case(identifier(target), _.constant(true)),
-      j.case(j._,                _.constant(false))
-    ]);
-  });
-}
-
 function explore(arg, f) {
   return f(arg) || subExpressionsOf(arg).some(function (subExpression) {
     return explore(subExpression, f);
@@ -87,8 +78,8 @@ function declarationsOf(ast) {
 }
 
 module.exports = {
+  explore: explore,
   identifier: identifier,
   expressionsOf: expressionsOf,
-  declarationsOf: declarationsOf,
-  expressionHasUsage: expressionHasUsage
+  declarationsOf: declarationsOf
 };
