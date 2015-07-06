@@ -19,33 +19,41 @@ function expressionsOf(ast, binding) {
 }
 
 function expressionHasUsage(arg, target) {
-  return j.match(arg, [
+  return explore(arg, function (expression) {
+    return j.match(expression, [
+      j.case(identifier(target), _.constant(true)),
+      j.case(j._,                _.constant(false))
+    ]);
+  });
+}
+
+function explore(arg, f) {
+  return f(arg) || j.match(arg, [
     j.case(type('CallExpression'), function (result) {
-     return expressionHasUsage(arg.callee, target);
+     return explore(arg.callee, f);
     }),
     j.case(type('BinaryExpression'), function (result) {
-     return expressionHasUsage(arg.left, target) || expressionHasUsage(arg.right, target);
+     return explore(arg.left, f) || explore(arg.right, f);
     }),
     j.case(type('ReturnStatement'), function (result) {
-     return expressionHasUsage(arg.argument, target);
+     return explore(arg.argument, f);
     }),
     j.case(type('ExpressionStatement'), function (result) {
-     return expressionHasUsage(arg.expression, target);
+     return explore(arg.expression, f);
     }),
     j.case(type('BlockStatement'), function (result) {
      return arg.body.some(function (it) {
-       return expressionHasUsage(it, target);
+       return explore(it, f);
      });
     }),
     j.case(type('VariableDeclaration'), function (result) {
      return arg.declarations.some(function (it) {
-       return expressionHasUsage(it, target);
+       return explore(it, f);
      });
     }),
     j.case(type('VariableDeclarator'), function (result) {
-     return expressionHasUsage(arg.init, target);
+     return explore(arg.init, f);
     }),
-    j.case(identifier(target), _.constant(true)),
     j.case(j._, _.constant(false))
   ]);
 }
