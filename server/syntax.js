@@ -28,33 +28,35 @@ function expressionHasUsage(arg, target) {
 }
 
 function explore(arg, f) {
-  return f(arg) || j.match(arg, [
-    j.case(type('CallExpression'), function (result) {
-     return explore(arg.callee, f);
+  return f(arg) || subExpressionsOf(arg).some(function (subExpression) {
+    return explore(subExpression, f);
+  });
+}
+
+function subExpressionsOf(exp) {
+  return j.match(exp, [
+    j.case(type('CallExpression'), function () {
+     return [exp.callee];
     }),
-    j.case(type('BinaryExpression'), function (result) {
-     return explore(arg.left, f) || explore(arg.right, f);
+    j.case(type('BinaryExpression'), function () {
+     return [exp.left, exp.right];
     }),
-    j.case(type('ReturnStatement'), function (result) {
-     return explore(arg.argument, f);
+    j.case(type('ReturnStatement'), function () {
+     return [exp.argument];
     }),
-    j.case(type('ExpressionStatement'), function (result) {
-     return explore(arg.expression, f);
+    j.case(type('ExpressionStatement'), function () {
+     return [exp.expression];
     }),
-    j.case(type('BlockStatement'), function (result) {
-     return arg.body.some(function (it) {
-       return explore(it, f);
-     });
+    j.case(type('BlockStatement'), function () {
+     return exp.body;
     }),
-    j.case(type('VariableDeclaration'), function (result) {
-     return arg.declarations.some(function (it) {
-       return explore(it, f);
-     });
+    j.case(type('VariableDeclaration'), function () {
+     return exp.declarations;
     }),
-    j.case(type('VariableDeclarator'), function (result) {
-     return explore(arg.init, f);
+    j.case(type('VariableDeclarator'), function () {
+     return [exp.init];
     }),
-    j.case(j._, _.constant(false))
+    j.case(j._, _.constant([]))
   ]);
 }
 
