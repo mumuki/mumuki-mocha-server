@@ -21,8 +21,11 @@
     "bluebird": "^2.9.30",
     "body-parser": "^1.10.2",
     "del": "^1.2.0",
+    "esprima": "^2.4.1",
     "express": "^4.11.1",
-    "tmp": "0.0.25"
+    "lodash": "^3.10.0",
+    "tmp": "0.0.25",
+    "junify": "1.0.2"
   },
   "devDependencies": {
     "codeclimate-test-reporter": "^0.1.0",

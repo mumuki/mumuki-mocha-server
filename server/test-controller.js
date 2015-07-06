@@ -13,7 +13,7 @@ var sendResult = function (testReport) {
 };
 
 var deleteTempFile = function (testReport) {
-  return delAsync(testReport.filepath);
+  return delAsync(testReport.filepath, { force: true });
 };
 
 module.exports = {
