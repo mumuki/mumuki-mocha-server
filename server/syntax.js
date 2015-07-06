@@ -45,10 +45,8 @@ function expressionHasUsage(arg, target) {
     [{ type: 'VariableDeclarator', init: j.variable('sub'), _: j._ }, function (result) {
       return expressionHasUsage(result.sub, target);
     }],
-    [{ type: 'Identifier', name: j.variable('sub'), _: j._ }, function (result) {
-      return result.sub === target;
-    }],
-    [j._, _.constant(false)],
+    [ identifier(target), _.constant(true) ],
+    [ j._, _.constant(false) ],
   ]);
 }
 
