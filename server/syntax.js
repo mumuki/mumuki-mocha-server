@@ -8,13 +8,15 @@ var extensions = require('./extensions');
 
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
-    if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, node)) {
-      return [node.body];
-    } else if (j.unify({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, node)) {
-      return [node.init];
-    } else {
-      return [];
-    }
+    return j.match(node, [
+      j.case({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, function () {
+        return [node.body];
+      }),
+      j.case({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, function () {
+        return [node.init];
+      }),
+      j.case(j._, _.constant([]))
+    ]);
   });
 }
 
@@ -70,13 +72,17 @@ function type(t) {
 
 function declarationsOf(ast) {
   return ast.body.concatMap(function (node) {
-    if (j.unify({ type: 'FunctionDeclaration', _: j._ }, node)) {
-      return [node];
-    } else if (j.unify({ type: 'VariableDeclaration', _: j._ }, node)) {
-      return node.declarations;
-    } else {
-      return [];
-    }
+    return j.match(node, [
+      j.case(type('FunctionDeclaration'), function () {
+        return [node];
+      }),
+      j.case(type('VariableDeclaration'), function () {
+        return node.declarations;
+      }),
+      j.case(j._ , function () {
+        return [];
+      })
+    ]);
   });
 }
 
