@@ -1,17 +1,23 @@
 'use strict';
 
 var _ = require('lodash');
+var j = require('junify');
+
+var syntax = require('./syntax');
 
 var expectationChecker = {
 
-  HasBinding: function (astNode) {
-    return !_.isEmpty(astNode);
+  HasBinding: function (ast, binding) {
+    return syntax.declarationsOf(ast).some(syntax.match([
+      { type: 'FunctionDeclaration', id: syntax.identifier(binding), _: j._ },
+      { type: 'VariableDeclarator', id: syntax.identifier(binding), _: j._ }
+    ]));
   },
 
-  HasUsage: function (astNode, target) {
-    var node = JSON.stringify(astNode);
-    var regExp = new RegExp('"callee":{"type":"Identifier","name":"' + target.trim() + '"}');
-    return !_.isEmpty(astNode) && regExp.test(node);
+  HasUsage: function (ast, binding, target) {
+    return syntax.expressionsOf(ast, binding).some(function (node) {
+      return syntax.expressionHasUsage(node, target);
+    });
   },
 
   Default: function () {
@@ -22,11 +28,6 @@ var expectationChecker = {
 
 function isNot(value) {
   return /not/i.test(value);
-}
-
-function lookup(ast, binding) {
-  var programStatements = ast.body;
-  return _.find(programStatements, { id: { type: 'Identifier', name: binding } });
 }
 
 function getInspection(expectation) {
@@ -41,18 +42,16 @@ function getInspection(expectation) {
   };
 }
 
-function checkExpectation(astNode, inspection) {
+function checkExpectation(ast, binding, inspection) {
   var checker = expectationChecker[inspection.type] || expectationChecker.Default;
-  return checker(astNode, inspection.target);
+  return checker(ast, binding, inspection.target);
 }
 
 module.exports = {
 
   isValid: function (ast, expectation) {
-    var astNode = lookup(ast, expectation.binding);
     var inspection = getInspection(expectation);
-
-    return inspection.getResult(checkExpectation(astNode, inspection));
+    return inspection.getResult(checkExpectation(ast, expectation.binding, inspection));
   }
 
 };
