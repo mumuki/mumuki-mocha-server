@@ -20,38 +20,42 @@ function expressionsOf(ast, binding) {
 
 function expressionHasUsage(arg, target) {
   return j.match(arg, [
-    [{ type: 'CallExpression', callee: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'BinaryExpression', operator: j._, left: j.variable('sub1'), right: j.variable('sub2') }, function (result) {
-      return expressionHasUsage(result.sub1, target) || expressionHasUsage(result.sub2, target);
-    }],
-    [{ type: 'ReturnStatement', argument: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'ExpressionStatement', expression: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'BlockStatement', body: j.variable('sub'), _: j._ }, function (result) {
-      return result.sub.some(function (it) {
-        return expressionHasUsage(it, target);
-      });
-    }],
-    [{ type: 'VariableDeclaration', declarations: j.variable('sub'), _: j._ }, function (result) {
-      return result.sub.some(function (it) {
-        return expressionHasUsage(it, target);
-      });
-    }],
-    [{ type: 'VariableDeclarator', init: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [ identifier(target), _.constant(true) ],
-    [ j._, _.constant(false) ],
+    j.case(type('CallExpression'), function (result) {
+     return expressionHasUsage(arg.callee, target);
+    }),
+    j.case(type('BinaryExpression'), function (result) {
+     return expressionHasUsage(arg.left, target) || expressionHasUsage(arg.right, target);
+    }),
+    j.case(type('ReturnStatement'), function (result) {
+     return expressionHasUsage(arg.argument, target);
+    }),
+    j.case(type('ExpressionStatement'), function (result) {
+     return expressionHasUsage(arg.expression, target);
+    }),
+    j.case(type('BlockStatement'), function (result) {
+     return arg.body.some(function (it) {
+       return expressionHasUsage(it, target);
+     });
+    }),
+    j.case(type('VariableDeclaration'), function (result) {
+     return arg.declarations.some(function (it) {
+       return expressionHasUsage(it, target);
+     });
+    }),
+    j.case(type('VariableDeclarator'), function (result) {
+     return expressionHasUsage(arg.init, target);
+    }),
+    j.case(identifier(target), _.constant(true)),
+    j.case(j._, _.constant(false))
   ]);
 }
 
 function identifier(binding) {
   return { type: 'Identifier', name: binding };
+}
+
+function type(t) {
+  return { type: t, _: j._ };
 }
 
 function declarationsOf(ast) {
