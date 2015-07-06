@@ -1,20 +1,10 @@
 'use strict';
 
 var should = require('should');
-
-var esprima = require('esprima');
-var j = require('junify');
-var _ = require('lodash');
-
 var assert = require('assert');
+var esprima = require('esprima');
 
 var Check = require('../server/expectation-checker');
-
-function extract(ast, patterns) {
-  return patterns.reduce(function (accum, pattern) {
-    return accum || j.unify(pattern, ast);
-  }, false);
-}
 
 function p(code) {
   return esprima.parse(code);
@@ -147,11 +137,6 @@ describe('utils', function () {
   it('concatMap', function () {
     var concatMap = [{foo: [1,2]}, {foo: [3,4]}].concatMap(function (obj) { return obj.foo; });
     concatMap.should.be.eql([1,2,3,4]);
-  });
-
-  it('extract', function () {
-    var binding = extract({ foo: 'bar' }, [{ foo: j.variable('exp') }]);
-    binding.should.be.eql({ exp: 'bar' });
   });
 
 });
