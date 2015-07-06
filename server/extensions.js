@@ -23,7 +23,7 @@ j.match = function (arg, cases) {
       return callback(match);
     }
   }
-  throw new Error('Pattern matchnig error ' + JSON.stringify(arg));
+  throw new Error('Non exhaustive pattern-matching: ' + JSON.stringify(arg));
 };
 
 
