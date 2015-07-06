@@ -19,7 +19,7 @@ function expressionsOf(ast, binding) {
 }
 
 function expressionHasUsage(arg, target) {
-  return matches(arg, [
+  return j.match(arg, [
     [{ type: 'CallExpression', callee: j.variable('sub'), _: j._ }, function (result) {
       return expressionHasUsage(result.sub, target);
     }],
@@ -50,14 +50,6 @@ function expressionHasUsage(arg, target) {
   ]);
 }
 
-function match(patterns) {
-  return function (it) {
-    return patterns.some(function (pattern) {
-      return  j.unify(pattern, it);
-    });
-  };
-}
-
 function identifier(binding) {
   return { type: 'Identifier', name: binding };
 }
@@ -74,21 +66,7 @@ function declarationsOf(ast) {
   });
 }
 
-function matches(arg, cases) {
-  for (var i = 0; i < cases.length; i++) {
-    var pattern = cases[i][0];
-    var callback = cases[i][1];
-    var match = j.unify(pattern, arg);
-    if (match) {
-      return callback(match);
-    }
-  }
-  throw new Error('Pattern matchnig error ' + JSON.stringify(arg));
-}
-
 module.exports = {
-  match: match,
-  matches: matches,
   identifier: identifier,
   expressionsOf: expressionsOf,
   declarationsOf: declarationsOf,
