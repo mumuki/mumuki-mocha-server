@@ -26,7 +26,9 @@ j.match = function (arg, cases) {
   throw new Error('Non exhaustive pattern-matching: ' + JSON.stringify(arg));
 };
 
-
+j.case = function (pattern, action) {
+  return [pattern, action];
+};
 
 module.exports = {
   j: j

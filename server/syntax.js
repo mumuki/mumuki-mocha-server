@@ -8,45 +8,48 @@ var extensions = require('./extensions');
 
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
-    if (j.unify({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, node)) {
-      return [node.body];
-    } else if (j.unify({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, node)) {
-      return [node.init];
-    } else {
-      return [];
-    }
+    return j.match(node, [
+      j.case({ type: 'FunctionDeclaration', id: identifier(binding), _: j._ }, function () {
+        return [node.body];
+      }),
+      j.case({ type: 'VariableDeclarator', id: identifier(binding), _: j._ }, function () {
+        return [node.init];
+      }),
+      j.case(j._, _.constant([]))
+    ]);
   });
 }
 
-function expressionHasUsage(arg, target) {
-  return j.match(arg, [
-    [{ type: 'CallExpression', callee: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'BinaryExpression', operator: j._, left: j.variable('sub1'), right: j.variable('sub2') }, function (result) {
-      return expressionHasUsage(result.sub1, target) || expressionHasUsage(result.sub2, target);
-    }],
-    [{ type: 'ReturnStatement', argument: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'ExpressionStatement', expression: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [{ type: 'BlockStatement', body: j.variable('sub'), _: j._ }, function (result) {
-      return result.sub.some(function (it) {
-        return expressionHasUsage(it, target);
-      });
-    }],
-    [{ type: 'VariableDeclaration', declarations: j.variable('sub'), _: j._ }, function (result) {
-      return result.sub.some(function (it) {
-        return expressionHasUsage(it, target);
-      });
-    }],
-    [{ type: 'VariableDeclarator', init: j.variable('sub'), _: j._ }, function (result) {
-      return expressionHasUsage(result.sub, target);
-    }],
-    [ identifier(target), _.constant(true) ],
-    [ j._, _.constant(false) ],
+function explore(arg, f) {
+  return f(arg) || subExpressionsOf(arg).some(function (subExpression) {
+    return explore(subExpression, f);
+  });
+}
+
+function subExpressionsOf(exp) {
+  return j.match(exp, [
+    j.case(type('CallExpression'), function () {
+     return [exp.callee];
+    }),
+    j.case(type('BinaryExpression'), function () {
+     return [exp.left, exp.right];
+    }),
+    j.case(type('ReturnStatement'), function () {
+     return [exp.argument];
+    }),
+    j.case(type('ExpressionStatement'), function () {
+     return [exp.expression];
+    }),
+    j.case(type('BlockStatement'), function () {
+     return exp.body;
+    }),
+    j.case(type('VariableDeclaration'), function () {
+     return exp.declarations;
+    }),
+    j.case(type('VariableDeclarator'), function () {
+     return [exp.init];
+    }),
+    j.case(j._, _.constant([]))
   ]);
 }
 
@@ -54,21 +57,29 @@ function identifier(binding) {
   return { type: 'Identifier', name: binding };
 }
 
+function type(t) {
+  return { type: t, _: j._ };
+}
+
 function declarationsOf(ast) {
   return ast.body.concatMap(function (node) {
-    if (j.unify({ type: 'FunctionDeclaration', _: j._ }, node)) {
-      return [node];
-    } else if (j.unify({ type: 'VariableDeclaration', _: j._ }, node)) {
-      return node.declarations;
-    } else {
-      return [];
-    }
+    return j.match(node, [
+      j.case(type('FunctionDeclaration'), function () {
+        return [node];
+      }),
+      j.case(type('VariableDeclaration'), function () {
+        return node.declarations;
+      }),
+      j.case(j._ , function () {
+        return [];
+      })
+    ]);
   });
 }
 
 module.exports = {
+  explore: explore,
   identifier: identifier,
   expressionsOf: expressionsOf,
-  declarationsOf: declarationsOf,
-  expressionHasUsage: expressionHasUsage
+  declarationsOf: declarationsOf
 };
