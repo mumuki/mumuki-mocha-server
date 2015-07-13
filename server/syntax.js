@@ -6,6 +6,12 @@ var esprima = require('esprima');
 
 var extensions = require('./extensions');
 
+function hasExpression(ast, binding, f) {
+  return expressionsOf(ast, binding).some(function (node) {
+    return explore(node, f);
+  });
+}
+
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
     return j.match(node, [
@@ -81,5 +87,6 @@ module.exports = {
   explore: explore,
   identifier: identifier,
   expressionsOf: expressionsOf,
-  declarationsOf: declarationsOf
+  declarationsOf: declarationsOf,
+  hasExpression: hasExpression
 };

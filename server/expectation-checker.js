@@ -15,8 +15,11 @@ var expectationChecker = {
   },
 
   HasUsage: function (ast, binding, target) {
-    return syntax.expressionsOf(ast, binding).some(function (node) {
-      return expressionHasUsage(node, target);
+    return syntax.hasExpression(ast, binding, function (expression) {
+      return j.match(expression, [
+        j.case(syntax.identifier(target), _.constant(true)),
+        j.case(j._                      , _.constant(false))
+      ]);
     });
   },
 
@@ -25,15 +28,6 @@ var expectationChecker = {
   }
 
 };
-
-function expressionHasUsage(arg, target) {
-  return syntax.explore(arg, function (expression) {
-    return j.match(expression, [
-      j.case(syntax.identifier(target), _.constant(true)),
-      j.case(j._                      , _.constant(false))
-    ]);
-  });
-}
 
 function isNot(value) {
   return /not/i.test(value);
