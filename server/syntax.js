@@ -12,6 +12,10 @@ function hasExpression(ast, binding, f) {
   });
 }
 
+function hasDeclaration(ast, f) {
+  return declarationsOf(ast).some(f);
+}
+
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
     return j.match(node, [
@@ -84,9 +88,7 @@ function declarationsOf(ast) {
 }
 
 module.exports = {
-  explore: explore,
   identifier: identifier,
-  expressionsOf: expressionsOf,
-  declarationsOf: declarationsOf,
-  hasExpression: hasExpression
+  hasExpression: hasExpression,
+  hasDeclaration: hasDeclaration
 };

@@ -8,7 +8,7 @@ var syntax = require('./syntax');
 var expectationChecker = {
 
   HasBinding: function (ast, binding) {
-    return syntax.declarationsOf(ast).some(j.matchesAny([
+    return syntax.hasDeclaration(ast, j.matchesAny([
       { type: 'FunctionDeclaration', id: syntax.identifier(binding), _: j._ },
       { type: 'VariableDeclarator', id: syntax.identifier(binding), _: j._ }
     ]));
