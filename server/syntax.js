@@ -6,6 +6,40 @@ var esprima = require('esprima');
 
 var extensions = require('./extensions');
 
+//======
+//Public
+//======
+
+
+// common patterns
+
+function identifier(binding) {
+  return { type: 'Identifier', name: binding };
+}
+
+function type(t) {
+  return { type: t, _: j._ };
+}
+
+// predicates
+
+function hasExpression(ast, binding, f) {
+  return expressionsOf(ast, binding).some(function (node) {
+    return explore(node, f);
+  });
+}
+
+function hasDeclaration(ast, f) {
+  return declarationsOf(ast).some(f);
+}
+
+//=======
+//Private
+//=======
+
+
+// low level iteration
+
 function expressionsOf(ast, binding) {
   return declarationsOf(ast).concatMap(function (node) {
     return j.match(node, [
@@ -19,6 +53,25 @@ function expressionsOf(ast, binding) {
     ]);
   });
 }
+
+
+function declarationsOf(ast) {
+  return ast.body.concatMap(function (node) {
+    return j.match(node, [
+      j.case(type('FunctionDeclaration'), function () {
+        return [node];
+      }),
+      j.case(type('VariableDeclaration'), function () {
+        return node.declarations;
+      }),
+      j.case(j._ , function () {
+        return [];
+      })
+    ]);
+  });
+}
+
+// Expressions exploration
 
 function explore(arg, f) {
   return f(arg) || subExpressionsOf(arg).some(function (subExpression) {
@@ -53,33 +106,8 @@ function subExpressionsOf(exp) {
   ]);
 }
 
-function identifier(binding) {
-  return { type: 'Identifier', name: binding };
-}
-
-function type(t) {
-  return { type: t, _: j._ };
-}
-
-function declarationsOf(ast) {
-  return ast.body.concatMap(function (node) {
-    return j.match(node, [
-      j.case(type('FunctionDeclaration'), function () {
-        return [node];
-      }),
-      j.case(type('VariableDeclaration'), function () {
-        return node.declarations;
-      }),
-      j.case(j._ , function () {
-        return [];
-      })
-    ]);
-  });
-}
-
 module.exports = {
-  explore: explore,
   identifier: identifier,
-  expressionsOf: expressionsOf,
-  declarationsOf: declarationsOf
+  hasExpression: hasExpression,
+  hasDeclaration: hasDeclaration
 };
