@@ -4,19 +4,17 @@ module.exports = {
   basic : {
     ok: {
       body: {
-        test: [
-          'describe("Test True", function() {',
-          '  it("should returns true", function() {',
-          '    assert(testTrue());',
-          '  });',
-          '});'
-        ].join('\n'),
+        test: `
+          describe("Test True", function() {
+            it("should returns true", function() {
+              assert(testTrue());
+            });
+          });`,
         extra: '',
-        content: [
-          'function testTrue() {',
-          '  return true;',
-          '}'
-        ].join('\n'),
+        content: `
+          function testTrue() {
+            return true;
+          }`,
         expectations: []
       },
       expected: {
@@ -26,19 +24,17 @@ module.exports = {
     },
     fail: {
       body: {
-        test: [
-          'describe("Test True", function() {',
-          '  it("should returns true", function() {',
-          '    assert(testTrue());',
-          '  });',
-          '});'
-        ].join('\n'),
+        test: `
+          describe("Test True", function() {
+            it("should returns true", function() {
+              assert(testTrue());
+            });
+          });`,
         extra: '',
-        content: [
-          'function testTrue() {',
-          '  return false;',
-          '}'
-        ].join('\n'),
+        content: `
+          function testTrue() {
+            return false;
+          }`,
         expectations: []
       },
       expected: {
@@ -50,32 +46,29 @@ module.exports = {
   withExpectation : {
     ok: {
       body: {
-        test: [
-          'describe("haceFrioF", function() {',
-          '  it("212 °F no es frio", function() {',
-          '    assert(!haceFrioF(212));',
-          '  });',
-          '  it("104 °F no es frio", function() {',
-          '    assert(!haceFrioF(104));',
-          '  });',
-          '  it("50 °F no es frio", function() {',
-          '    assert(!haceFrioF(50));',
-          '  });',
-          '  it("5 °F es frio", function() {',
-          '    assert(haceFrioF(5));',
-          '  });',
-          '});'
-        ].join('\n'),
-        extra: [
-          'function fahrToCelsius(temp) {',
-          '  return (temp - 32) * 5 / 9;',
-          '}'
-        ].join('\n'),
-        content: [
-          'function haceFrioF(temp) {',
-          '  return 8 > fahrToCelsius(temp);',
-          '}'
-        ].join('\n'),
+        test: `
+          describe("haceFrioF", function() {
+            it("212 °F no es frio", function() {
+              assert(!haceFrioF(212));
+            });
+            it("104 °F no es frio", function() {
+              assert(!haceFrioF(104));
+            });
+            it("50 °F no es frio", function() {
+              assert(!haceFrioF(50));
+            });
+            it("5 °F es frio", function() {
+              assert(haceFrioF(5));
+            });
+          });`,
+        extra: `
+          function fahrToCelsius(temp) {
+            return (temp - 32) * 5 / 9;
+          }`,
+        content: `
+          function haceFrioF(temp) {
+            return 8 > fahrToCelsius(temp);
+          }`,
         expectations:[
           { binding: 'haceFrioF', inspection: 'HasBinding' },
           { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' },
@@ -89,32 +82,29 @@ module.exports = {
     },
     fail: {
       body: {
-        test: [
-          'describe("haceFrioF", function() {',
-          '  it("212 °F no es frio", function() {',
-          '    assert(!haceFrioF(212));',
-          '  });',
-          '  it("104 °F no es frio", function() {',
-          '    assert(haceFrioF(104));',
-          '  });',
-          '  it("50 °F no es frio", function() {',
-          '    assert(!haceFrioF(50));',
-          '  });',
-          '  it("5 °F es frio", function() {',
-          '    assert(!haceFrioF(5));',
-          '  });',
-          '});'
-        ].join('\n'),
-        extra: [
-          'function fahrToCelsius(temp) {',
-          '  return (temp - 32) * 5 / 9;',
-          '}'
-        ].join('\n'),
-        content: [
-          'function haceFrioF(temp) {',
-          '  return 8 > fahrToCelsius(temp);',
-          '}'
-        ].join('\n'),
+        test: `
+          describe("haceFrioF", function() {
+            it("212 °F no es frio", function() {
+              assert(!haceFrioF(212));
+            });
+            it("104 °F no es frio", function() {
+              assert(haceFrioF(104));
+            });
+            it("50 °F no es frio", function() {
+              assert(!haceFrioF(50));
+            });
+            it("5 °F es frio", function() {
+              assert(!haceFrioF(5));
+            });
+          });`,
+        extra: `
+          function fahrToCelsius(temp) {
+            return (temp - 32) * 5 / 9;
+          }`,
+        content: `
+          function haceFrioF(temp) {
+            return 8 > fahrToCelsius(temp);
+          }`,
         expectations:[
           { binding: 'haceFrioF', inspection: 'HasBinding' },
           { binding: 'haceFrioF', inspection: 'HasUsage:fahrToCelsius' },
