@@ -4,8 +4,11 @@
   "description": "Node server for running mocha tests within Mumuki",
   "main": "server/index.js",
   "scripts": {
-    "pretest": "rm -rf ./coverage",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec test/**/*.test.js"
+    "compile": "node_modules/.bin/babel src -d app",
+    "prestart": "npm run compile",
+    "start": "node app/server",
+    "pretest": "rm -rf ./coverage && npm run compile",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec app/test/**/*.test.js"
   },
   "repository": {
     "type": "git",
