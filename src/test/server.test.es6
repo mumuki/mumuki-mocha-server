@@ -7,14 +7,14 @@ var fixture = require('./fixture');
 
 var server = supertest(require('../server/server'));
 
-describe('POST /test', function () {
+describe('POST /test', () => {
 
-  var assert = function (testType, done) {
+  var assert = (testType, done) => {
     var excecise = fixture.basic[testType];
     server
       .post('/test')
       .send(excecise.body)
-      .expect(200, function (err, res) {
+      .expect(200, (err, res) => {
         var body = res.body;
         body.exit.should.be.eql(excecise.expected.exit);
         body.out.should.match(excecise.expected.out);
@@ -25,12 +25,12 @@ describe('POST /test', function () {
   it('should returns 200 when excercise passed', assert.bind(it, 'ok'));
   it('should returns 200 when excercise failed', assert.bind(it, 'fail'));
 
-  var assertExpectation = function (testType, done) {
+  var assertExpectation = (testType, done) => {
     var excecise = fixture.withExpectation[testType];
     server
       .post('/test')
       .send(excecise.body)
-      .expect(200, function (err, res) {
+      .expect(200, (err, res) => {
         var result = res.body;
         result.exit.should.be.eql(excecise.expected.exit);
         result.out.should.match(excecise.expected.out);
