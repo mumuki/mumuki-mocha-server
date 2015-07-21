@@ -6,6 +6,7 @@
   "nonew": true,
   "quotmark": "single",
   "strict": true,
+  "esnext": true,
   "undef": true,
   "node": true,
   "mocha": true
