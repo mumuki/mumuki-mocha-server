@@ -1,8 +1,8 @@
 'use strict';
 
-var esprima = require('esprima');
+let esprima = require('esprima');
 
-var expectationChecker = require('./expectation-checker');
+let expectationChecker = require('./expectation-checker');
 
 function checkExpectations(expectations, f) {
   return expectations.map(function (expectation) {
@@ -15,7 +15,7 @@ function checkExpectations(expectations, f) {
 
 function checkerFor(content) {
   try {
-    var ast = esprima.parse(content);
+    let ast = esprima.parse(content);
     return function (e) {
       return expectationChecker.isValid(ast, e);
     };

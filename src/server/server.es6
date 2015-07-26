@@ -1,11 +1,11 @@
 'use strict';
 
-var express = require('express');
-var bodyParser = require('body-parser');
+let express = require('express');
+let bodyParser = require('body-parser');
 
-var testController = require('./test-controller');
+let testController = require('./test-controller');
 
-var app = express();
+let app = express();
 
 app.post('/test', [
   bodyParser.json({ type: 'application/*' }),

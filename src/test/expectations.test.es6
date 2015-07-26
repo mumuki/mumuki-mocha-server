@@ -1,10 +1,10 @@
 'use strict';
 
-var should = require('should');
-var assert = require('assert');
-var esprima = require('esprima');
+let should = require('should');
+let assert = require('assert');
+let esprima = require('esprima');
 
-var Check = require('../server/expectation-checker');
+let Check = require('../server/expectation-checker');
 
 function p(code) {
   return esprima.parse(code);

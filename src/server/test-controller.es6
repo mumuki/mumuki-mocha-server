@@ -1,18 +1,18 @@
 'use strict';
 
-var Bluebird = require('bluebird');
+let Bluebird = require('bluebird');
 
-var compiler = require('./test-compiler');
-var runner = require('./test-runner');
-var del = require('del');
+let compiler = require('./test-compiler');
+let runner = require('./test-runner');
+let del = require('del');
 
-var delAsync = Bluebird.promisify(del);
+let delAsync = Bluebird.promisify(del);
 
-var sendResult = function (testReport) {
+let sendResult = function (testReport) {
   this.status(200).json(testReport.result);
 };
 
-var deleteTempFile = function (testReport) {
+let deleteTempFile = function (testReport) {
   return delAsync(testReport.filepath, { force: true });
 };
 

@@ -1,8 +1,8 @@
 'use strict';
 
-var child_process = require('child_process');
+let child_process = require('child_process');
 
-var Bluebird = require('bluebird');
+let Bluebird = require('bluebird');
 
 function runTestFile(compilation) {
   return new Bluebird(function (resolve, reject) {

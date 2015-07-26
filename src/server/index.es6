@@ -1,7 +1,7 @@
 'use strict';
 
-var port = process.env.PORT || 8080;
-var server = require('./server');
+let port = process.env.PORT || 8080;
+let server = require('./server');
 
 server.listen(port, function () {
   console.log('Serving on port ' + port);

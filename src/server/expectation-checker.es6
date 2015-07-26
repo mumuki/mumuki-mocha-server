@@ -1,11 +1,11 @@
 'use strict';
 
-var _ = require('lodash');
-var j = require('junify');
+let _ = require('lodash');
+let j = require('junify');
 
-var syntax = require('./syntax');
+let syntax = require('./syntax');
 
-var expectationChecker = {
+let expectationChecker = {
 
   HasBinding: function (ast, binding) {
     return syntax.hasDeclaration(ast, j.matchesAny([
@@ -34,8 +34,8 @@ function isNot(value) {
 }
 
 function getInspection(expectation) {
-  var inspection = expectation.inspection.split(':');
-  var not = inspection[0];
+  let inspection = expectation.inspection.split(':');
+  let not = inspection[0];
   return {
     type: inspection[isNot(not) ? 1 : 0],
     target: inspection[isNot(not) ? 2 : 1],
@@ -46,14 +46,14 @@ function getInspection(expectation) {
 }
 
 function checkExpectation(ast, binding, inspection) {
-  var checker = expectationChecker[inspection.type] || expectationChecker.Default;
+  let checker = expectationChecker[inspection.type] || expectationChecker.Default;
   return checker(ast, binding, inspection.target);
 }
 
 module.exports = {
 
   isValid: function (ast, expectation) {
-    var inspection = getInspection(expectation);
+    let inspection = getInspection(expectation);
     return inspection.getResult(checkExpectation(ast, expectation.binding, inspection));
   }
 

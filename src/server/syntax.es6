@@ -1,10 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
-var j = require('junify');
-var esprima = require('esprima');
+let _ = require('lodash');
+let j = require('junify');
+let esprima = require('esprima');
 
-var extensions = require('./extensions');
+let extensions = require('./extensions');
 
 //======
 //Public

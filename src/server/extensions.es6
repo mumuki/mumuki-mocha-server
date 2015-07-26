@@ -1,6 +1,6 @@
 'use strict';
 
-var j = require('junify');
+let j = require('junify');
 
 Array.prototype.concatMap = function (f) {
   return Array.prototype.concat.apply([], this.map(f));
@@ -15,10 +15,10 @@ j.matchesAny = function (patterns) {
 };
 
 j.match = function (arg, cases) {
-  for (var i = 0; i < cases.length; i++) {
-    var pattern = cases[i][0];
-    var callback = cases[i][1];
-    var match = j.unify(pattern, arg);
+  for (let i = 0; i < cases.length; i++) {
+    let pattern = cases[i][0];
+    let callback = cases[i][1];
+    let match = j.unify(pattern, arg);
     if (match) {
       return callback(match);
     }
