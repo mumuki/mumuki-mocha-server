@@ -7,17 +7,12 @@ Array.prototype.concatMap = function (f) {
 };
 
 j.matchesAny = function (patterns) {
-  return function (it) {
-    return patterns.some(function (pattern) {
-      return  j.unify(pattern, it);
-    });
-  };
+  return (it) => patterns.some(pattern => j.unify(pattern, it));
 };
 
 j.match = function (arg, cases) {
   for (let i = 0; i < cases.length; i++) {
-    let pattern = cases[i][0];
-    let callback = cases[i][1];
+    let [pattern, callback] = cases[i];
     let match = j.unify(pattern, arg);
     if (match) {
       return callback(match);
