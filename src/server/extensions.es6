@@ -18,7 +18,7 @@ j.match = function (arg, cases) {
       return callback(match);
     }
   }
-  throw new Error('Non exhaustive pattern-matching: ' + JSON.stringify(arg));
+  throw new Error(`Non exhaustive pattern-matching: ${JSON.stringify(arg)}`);
 };
 
 j.case = function (pattern, action) {

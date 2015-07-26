@@ -21,12 +21,11 @@ function writeContent(path, content) {
 }
 
 function compile(body) {
-  let requires = 'var assert = require("assert");';
-
-  return requires +'\n'+
-         body.extra + '\n' +
-         body.content + '\n' +
-         body.test;
+  return `
+    var assert = require("assert");
+    ${body.extra}
+    ${body.content}
+    ${body.test}`;
 }
 
 exports.createCompilationFile = createCompilationFile;
