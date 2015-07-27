@@ -1,21 +1,21 @@
 'use strict';
 
-var should = require('should');
-var supertest = require('supertest');
+let should = require('should');
+let supertest = require('supertest');
 
-var fixture = require('./fixture');
+let fixture = require('./fixture');
 
-var server = supertest(require('../server/server'));
+let server = supertest(require('../server/server'));
 
-describe('POST /test', function () {
+describe('POST /test', () => {
 
-  var assert = function (testType, done) {
-    var excecise = fixture.basic[testType];
+  let assert = (testType, done) => {
+    let excecise = fixture.basic[testType];
     server
       .post('/test')
       .send(excecise.body)
-      .expect(200, function (err, res) {
-        var body = res.body;
+      .expect(200, (err, res) => {
+        let body = res.body;
         body.exit.should.be.eql(excecise.expected.exit);
         body.out.should.match(excecise.expected.out);
         done(err, res);
@@ -25,13 +25,13 @@ describe('POST /test', function () {
   it('should returns 200 when excercise passed', assert.bind(it, 'ok'));
   it('should returns 200 when excercise failed', assert.bind(it, 'fail'));
 
-  var assertExpectation = function (testType, done) {
-    var excecise = fixture.withExpectation[testType];
+  let assertExpectation = (testType, done) => {
+    let excecise = fixture.withExpectation[testType];
     server
       .post('/test')
       .send(excecise.body)
-      .expect(200, function (err, res) {
-        var result = res.body;
+      .expect(200, (err, res) => {
+        let result = res.body;
         result.exit.should.be.eql(excecise.expected.exit);
         result.out.should.match(excecise.expected.out);
         result.expectationResults.should.be.eql([

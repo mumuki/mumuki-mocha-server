@@ -4,8 +4,11 @@
   "description": "Node server for running mocha tests within Mumuki",
   "main": "server/index.js",
   "scripts": {
-    "pretest": "rm -rf ./coverage",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec test/**/*.test.js"
+    "compile": "node_modules/.bin/babel src -d app",
+    "prestart": "npm run compile",
+    "start": "node app/server",
+    "pretest": "rm -rf ./coverage && npm run compile",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec app/test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -18,15 +21,16 @@
   },
   "homepage": "https://github.com/aguspina/mumuki-mocha-server",
   "dependencies": {
+    "babel": "^5.6.23",
     "bluebird": "^2.9.30",
     "body-parser": "^1.10.2",
     "del": "^1.2.0",
     "esprima": "^2.4.1",
     "express": "^4.11.1",
-    "lodash": "^3.10.0",
-    "tmp": "0.0.25",
     "junify": "1.0.2",
-    "mocha": "^2.2.5"
+    "lodash": "^3.10.0",
+    "mocha": "^2.2.5",
+    "tmp": "0.0.25"
   },
   "devDependencies": {
     "codeclimate-test-reporter": "^0.1.0",

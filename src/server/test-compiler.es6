@@ -1,10 +1,10 @@
 'use strict';
 
-var fs = require('fs');
-var tmp = require('tmp');
-var Bluebird = require('bluebird');
+let fs = require('fs');
+let tmp = require('tmp');
+let Bluebird = require('bluebird');
 
-var expectations = require('./test-expectations');
+let expectations = require('./test-expectations');
 
 Bluebird.promisifyAll(fs);
 Bluebird.promisifyAll(tmp);
@@ -21,12 +21,11 @@ function writeContent(path, content) {
 }
 
 function compile(body) {
-  var requires = 'var assert = require("assert");';
-
-  return requires +'\n'+
-         body.extra + '\n' +
-         body.content + '\n' +
-         body.test;
+  return `
+    var assert = require("assert");
+    ${body.extra}
+    ${body.content}
+    ${body.test}`;
 }
 
 exports.createCompilationFile = createCompilationFile;
