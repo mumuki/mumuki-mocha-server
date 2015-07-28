@@ -23,8 +23,8 @@ let expectationChecker = {
   HasArity: (ast, binding, target) =>
     syntax.hasDeclaration(ast, j.matchesAny([
       { type: 'FunctionDeclaration', id: syntax.identifier(binding), params: matchArray(target), _: j._ },
+      { type: 'VariableDeclarator' , id: syntax.identifier(binding), init: { params: matchArray(target), _: j._ }, _: j._ },
     ])),
-
 
   Default: () => true
 
