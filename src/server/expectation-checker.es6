@@ -22,17 +22,13 @@ let expectationChecker = {
 
   HasArity: (ast, binding, target) =>
     syntax.hasDeclaration(ast, j.matchesAny([
-      { type: 'FunctionDeclaration', id: syntax.identifier(binding), params: matchArray(target), _: j._ },
-      { type: 'VariableDeclarator' , id: syntax.identifier(binding), init: { params: matchArray(target), _: j._ }, _: j._ },
+      { type: 'FunctionDeclaration', id: syntax.identifier(binding), params: syntax.arrayLength(target), _: j._ },
+      { type: 'VariableDeclarator' , id: syntax.identifier(binding), init: { params: syntax.arrayLength(target), _: j._ }, _: j._ },
     ])),
 
   Default: () => true
 
 };
-
-function matchArray(times) {
-  return _.times(times, () => j._);
-}
 
 function isNot(value) {
   return /not/i.test(value);

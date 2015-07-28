@@ -21,6 +21,10 @@ function type(t) {
   return { type: t, _: j._ };
 }
 
+function arrayLength(n) {
+  return _.times(n, () => j._);
+}
+
 // predicates
 
 function hasExpression(ast, binding, f) {
@@ -78,6 +82,7 @@ function subExpressionsOf(exp) {
 
 module.exports = {
   identifier: identifier,
+  arrayLength: arrayLength,
   hasExpression: hasExpression,
   hasDeclaration: hasDeclaration
 };
