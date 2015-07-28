@@ -24,6 +24,7 @@ describe('POST /test', () => {
 
   it('should returns 200 when excercise passed', assert.bind(it, 'ok'));
   it('should returns 200 when excercise failed', assert.bind(it, 'fail'));
+  it('should returns 200 when excercise failed on malicious code', assert.bind(it, 'failOnMaliciousCode'));
 
   let assertExpectation = (testType, done) => {
     let excecise = fixture.withExpectation[testType];

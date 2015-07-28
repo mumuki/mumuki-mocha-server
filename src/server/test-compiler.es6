@@ -23,6 +23,10 @@ function writeContent(path, content) {
 function compile(body) {
   return `
     var assert = require("assert");
+    require = function() { throw new Error("require not available") };
+    module.require = require;
+    eval = function() { throw new Error("eval not available") };
+
     ${body.extra}
     ${body.content}
     ${body.test}`;

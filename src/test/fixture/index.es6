@@ -41,6 +41,27 @@ module.exports = {
         exit: 'failed',
         out: /0 passing \(\d+ms\)\s+1 failing/
       }
+    },
+    failOnMaliciousCode: {
+      body: {
+        test: `
+          var fs = require('fs');
+          describe("Test True", function() {
+            it("should returns true", function() {
+              assert(testTrue());
+            });
+          });`,
+        extra: '',
+        content: `
+          function testTrue() {
+            return true;
+          }`,
+        expectations: []
+      },
+      expected: {
+        exit: 'failed',
+        out: /Error: require not available/
+      }
     }
   },
   withExpectation : {
