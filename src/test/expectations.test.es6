@@ -131,3 +131,50 @@ describe('hasUsage', () => {
   });
 
 });
+
+describe('hasArity', () => {
+
+  function hasArity(code, binding, target) {
+    return Check.isValid(p(code), {
+      binding: binding,
+      inspection: 'HasArity:' + target
+    });
+  }
+
+  it('should work with foo/0 and target 0', () => {
+    assert(hasArity('function foo() {}', 'foo', 0));
+  });
+
+  it('should not work with foo/0 and target 1', () => {
+    assert(!hasArity('function foo() {}', 'foo', 1));
+  });
+
+  it('should work with foo/2 and target 2', () => {
+    assert(hasArity('function foo(bar, baz) {}', 'foo', 2));
+  });
+
+  it('should not work with foo/2 and target 1', () => {
+    assert(!hasArity('function foo(bar, baz) {}', 'foo', 1));
+  });
+
+  it('should work with function variable foo/0 and target 0', () => {
+    assert(hasArity('var foo = function () {}', 'foo', 0));
+  });
+
+  it('should not work with function variable foo/0 and target 1', () => {
+    assert(!hasArity('var foo = function () {}', 'foo', 1));
+  });
+
+  it('should work with function variable foo/2 and target 2', () => {
+    assert(hasArity('var foo = function (bar, baz) {}', 'foo', 2));
+  });
+
+  it('should not work with function variable foo/2 and target 1', () => {
+    assert(!hasArity('var foo = function (bar, baz) {}', 'foo', 1));
+  });
+
+  it('should not work with constant variable foo and target 1', () => {
+    assert(!hasArity('var foo = 1', 'foo', 0));
+  });
+
+});
