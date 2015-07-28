@@ -132,7 +132,7 @@ describe('hasUsage', () => {
 
 });
 
-describe.only('hasArity', () => {
+describe('hasArity', () => {
 
   function hasArity(code, binding, target) {
     return Check.isValid(p(code), {

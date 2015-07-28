@@ -9,8 +9,8 @@ let expectationChecker = {
 
   HasBinding: (ast, binding) =>
     syntax.hasDeclaration(ast, j.matchesAny([
-      { type: 'FunctionDeclaration', id: syntax.identifier(binding), _: j._ },
-      { type: 'VariableDeclarator' , id: syntax.identifier(binding), _: j._ }
+      syntax.declarationId('FunctionDeclaration', binding),
+      syntax.declarationId('VariableDeclarator', binding)
     ])),
 
   HasUsage: (ast, binding, target) =>
@@ -22,13 +22,17 @@ let expectationChecker = {
 
   HasArity: (ast, binding, target) =>
     syntax.hasDeclaration(ast, j.matchesAny([
-      { type: 'FunctionDeclaration', id: syntax.identifier(binding), params: syntax.arrayLength(target), _: j._ },
-      { type: 'VariableDeclarator' , id: syntax.identifier(binding), init: { params: syntax.arrayLength(target), _: j._ }, _: j._ },
+      syntax.declarationId('FunctionDeclaration', binding, params(target)),
+      syntax.declarationId('VariableDeclarator' , binding, { init: params(target) })
     ])),
 
   Default: () => true
 
 };
+
+function params(target) {
+  return { params: syntax.arrayLength(target), _: j._ };
+}
 
 function isNot(value) {
   return /not/i.test(value);

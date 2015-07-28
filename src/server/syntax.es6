@@ -25,6 +25,10 @@ function arrayLength(n) {
   return _.times(n, () => j._);
 }
 
+function declarationId(type, binding, others) {
+  return _.defaults({ type: type, id: identifier(binding), _: j._ }, others);
+}
+
 // predicates
 
 function hasExpression(ast, binding, f) {
@@ -83,6 +87,7 @@ function subExpressionsOf(exp) {
 module.exports = {
   identifier: identifier,
   arrayLength: arrayLength,
+  declarationId: declarationId,
   hasExpression: hasExpression,
   hasDeclaration: hasDeclaration
 };
