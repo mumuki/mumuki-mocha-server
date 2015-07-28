@@ -131,3 +131,30 @@ describe('hasUsage', () => {
   });
 
 });
+
+describe.only('hasArity', () => {
+
+  function hasArity(code, binding, target) {
+    return Check.isValid(p(code), {
+      binding: binding,
+      inspection: 'HasArity:' + target
+    });
+  }
+
+  it('should work with foo/0 and target 0', () => {
+    assert(hasArity('function foo() {}', 'foo', 0));
+  });
+
+  it('should not work with foo/0 and target 1', () => {
+    assert(!hasArity('function foo() {}', 'foo', 1));
+  });
+
+  it('should work with foo/2 and target 2', () => {
+    assert(hasArity('function foo(bar, baz) {}', 'foo', 2));
+  });
+
+  it('should not work with foo/2 and target 1', () => {
+    assert(!hasArity('function foo(bar, baz) {}', 'foo', 1));
+  });
+
+});

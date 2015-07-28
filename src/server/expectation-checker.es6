@@ -20,9 +20,19 @@ let expectationChecker = {
         j.case(j._                      , () => false)
       ])),
 
+  HasArity: (ast, binding, target) =>
+    syntax.hasDeclaration(ast, j.matchesAny([
+      { type: 'FunctionDeclaration', id: syntax.identifier(binding), params: matchArray(target), _: j._ },
+    ])),
+
+
   Default: () => true
 
 };
+
+function matchArray(times) {
+  return _.times(times, () => j._);
+}
 
 function isNot(value) {
   return /not/i.test(value);
