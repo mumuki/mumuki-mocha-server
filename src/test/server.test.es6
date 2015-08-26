@@ -24,7 +24,8 @@ describe('POST /test', () => {
 
   it('should return 200 when excercise passed', assert.bind(it, 'ok'));
   it('should return 200 when excercise failed', assert.bind(it, 'fail'));
-  it('should return 200 when excercise failed on malicious code', assert.bind(it, 'failOnMaliciousCode'));
+  it('should return 200 when excercise failed on malicious code that uses require', assert.bind(it, 'failOnMaliciousCodeUsingRequire'));
+  it('should return 200 when excercise failed on malicious code that uses eval', assert.bind(it, 'failOnMaliciousCodeUsingEval'));
 
   let assertExpectation = (testType, done) => {
     let excecise = fixture.withExpectation[testType];

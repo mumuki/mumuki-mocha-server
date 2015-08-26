@@ -42,7 +42,7 @@ module.exports = {
         out: /0 passing \(\d+ms\)\s+1 failing/
       }
     },
-    failOnMaliciousCode: {
+    failOnMaliciousCodeUsingRequire: {
       body: {
         test: `
           var fs = require('fs');
@@ -61,6 +61,27 @@ module.exports = {
       expected: {
         exit: 'failed',
         out: /Error: require not available/
+      }
+    }    ,
+    failOnMaliciousCodeUsingEval: {
+      body: {
+        test: `
+          eval("alert('I\'m evil!')");
+          describe("Test True", function() {
+            it("should return true", function() {
+              assert(testTrue());
+            });
+          });`,
+        extra: '',
+        content: `
+          function testTrue() {
+            return true;
+          }`,
+        expectations: []
+      },
+      expected: {
+        exit: 'failed',
+        out: /Error: eval not available/
       }
     }
   },
