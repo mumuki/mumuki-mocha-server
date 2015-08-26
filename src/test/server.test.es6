@@ -22,9 +22,9 @@ describe('POST /test', () => {
       });
   };
 
-  it('should returns 200 when excercise passed', assert.bind(it, 'ok'));
-  it('should returns 200 when excercise failed', assert.bind(it, 'fail'));
-  it('should returns 200 when excercise failed on malicious code', assert.bind(it, 'failOnMaliciousCode'));
+  it('should return 200 when excercise passed', assert.bind(it, 'ok'));
+  it('should return 200 when excercise failed', assert.bind(it, 'fail'));
+  it('should return 200 when excercise failed on malicious code', assert.bind(it, 'failOnMaliciousCode'));
 
   let assertExpectation = (testType, done) => {
     let excecise = fixture.withExpectation[testType];
@@ -44,7 +44,7 @@ describe('POST /test', () => {
       });
   };
 
-  it('should returns 200 when excercise with expectations passed', assertExpectation.bind(it, 'ok'));
-  it('should returns 200 when excercise with expectations failed', assertExpectation.bind(it, 'fail'));
+  it('should return 200 when excercise with expectations passed', assertExpectation.bind(it, 'ok'));
+  it('should return 200 when excercise with expectations failed', assertExpectation.bind(it, 'fail'));
 
 });

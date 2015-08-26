@@ -6,7 +6,7 @@ module.exports = {
       body: {
         test: `
           describe("Test True", function() {
-            it("should returns true", function() {
+            it("should return true", function() {
               assert(testTrue());
             });
           });`,
@@ -26,7 +26,7 @@ module.exports = {
       body: {
         test: `
           describe("Test True", function() {
-            it("should returns true", function() {
+            it("should return true", function() {
               assert(testTrue());
             });
           });`,
@@ -47,7 +47,7 @@ module.exports = {
         test: `
           var fs = require('fs');
           describe("Test True", function() {
-            it("should returns true", function() {
+            it("should return true", function() {
               assert(testTrue());
             });
           });`,
