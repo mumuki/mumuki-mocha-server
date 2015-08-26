@@ -1,9 +1,14 @@
 language: node_js
 node_js:
-  - "0.12"
-
+- '0.12'
 env:
   CODECLIMATE_REPO_TOKEN: afea6e0b5f5b876e93090e1248231d383cc89f9f11c659648eb31ee4c236f141
-
 after_success:
-  - ./node_modules/.bin/codeclimate-test-reporter < ./coverage/lcov.info
+- ./node_modules/.bin/codeclimate-test-reporter < ./coverage/lcov.info
+deploy:
+  provider: heroku
+  api_key:
+    secure: tpuHX7wKg9+lVkizTdnI2ElsClgDAqrSMbyC5FX189XW5znuUIqRs0SrO4k7+UxXYQdTqred/oOHlbQX1AuE2/WBplhgn3hel1DsLiR+j6KbHS0XQRS21n1kEqsKvq/NJCzYxLcEJ6ShbpPFuSujRun0T3X4KVxwyIQzGS9RkBA=
+  app: mumuki-mocha-server
+  on:
+    repo: mumuki/mumuki-mocha-server
