@@ -6,7 +6,7 @@ module.exports = {
       body: {
         test: `
           describe("Test True", function() {
-            it("should returns true", function() {
+            it("should return true", function() {
               assert(testTrue());
             });
           });`,
@@ -26,7 +26,7 @@ module.exports = {
       body: {
         test: `
           describe("Test True", function() {
-            it("should returns true", function() {
+            it("should return true", function() {
               assert(testTrue());
             });
           });`,
@@ -40,6 +40,48 @@ module.exports = {
       expected: {
         exit: 'failed',
         out: /0 passing \(\d+ms\)\s+1 failing/
+      }
+    },
+    failOnMaliciousCodeUsingRequire: {
+      body: {
+        test: `
+          var fs = require('fs');
+          describe("Test True", function() {
+            it("should return true", function() {
+              assert(testTrue());
+            });
+          });`,
+        extra: '',
+        content: `
+          function testTrue() {
+            return true;
+          }`,
+        expectations: []
+      },
+      expected: {
+        exit: 'failed',
+        out: /Error: require not available/
+      }
+    }    ,
+    failOnMaliciousCodeUsingEval: {
+      body: {
+        test: `
+          eval("alert('I\'m evil!')");
+          describe("Test True", function() {
+            it("should return true", function() {
+              assert(testTrue());
+            });
+          });`,
+        extra: '',
+        content: `
+          function testTrue() {
+            return true;
+          }`,
+        expectations: []
+      },
+      expected: {
+        exit: 'failed',
+        out: /Error: eval not available/
       }
     }
   },
