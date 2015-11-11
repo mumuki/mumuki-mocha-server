@@ -12,7 +12,9 @@ j.matchesAny = function (patterns) {
 
 j.match = function (arg, cases) {
   for (let i = 0; i < cases.length; i++) {
-    let [pattern, callback] = cases[i];
+    let patternAndCallback = cases[i];
+    let pattern = patternAndCallback[0];
+    let callback = patternAndCallback[1];
     let match = j.unify(pattern, arg);
     if (match) {
       return callback(match);

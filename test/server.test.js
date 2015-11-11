@@ -5,7 +5,7 @@ let supertest = require('supertest');
 
 let fixture = require('./fixture');
 
-let server = supertest(require('../server/server'));
+let server = supertest(require('../src/server/server'));
 
 describe('POST /test', () => {
 
