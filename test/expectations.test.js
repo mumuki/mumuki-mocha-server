@@ -4,7 +4,7 @@ let should = require('should');
 let assert = require('assert');
 let esprima = require('esprima');
 
-let Check = require('../server/expectation-checker');
+let Check = require('../src/server/expectation-checker');
 
 function p(code) {
   return esprima.parse(code);
